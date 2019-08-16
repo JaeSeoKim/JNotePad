@@ -2,15 +2,20 @@ package jaeseokim.JNotePad;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -25,7 +30,7 @@ import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class JNotepad extends JFrame implements ActionListener{
-	int fontsize = 10;
+	int fontsize = 15;
 	double ver = 0.9;
 	FileNameExtensionFilter txtFilter = new FileNameExtensionFilter("txt 파일", "txt");
 	
@@ -39,11 +44,13 @@ public class JNotepad extends JFrame implements ActionListener{
 	
 	JMenuItem mis1 = new JMenuItem("Font Up");
 	JMenuItem mis2 = new JMenuItem("Font Down");
-
+	JMenuItem mis3 = new JMenuItem("Set Font Size");
+	
 	JMenuItem mii1 = new JMenuItem("license");
 	JMenuItem mii2 = new JMenuItem("information");
 	
-	
+	ImageIcon imageIcon = new ImageIcon("icon.png");
+	Image image = imageIcon.getImage();
 	
 	JLabel footer = new JLabel("준비완료");
 	
@@ -65,6 +72,7 @@ public class JNotepad extends JFrame implements ActionListener{
 			
 		}
 	}
+	
 	public void OpenJFileChooser() {
 		JFileChooser jfc = new JFileChooser();
 		jfc.addChoosableFileFilter(txtFilter);
@@ -96,6 +104,7 @@ public class JNotepad extends JFrame implements ActionListener{
 		
 		ms1.add(mis1);
 		ms1.add(mis2);
+		ms1.add(mis3);
 		
 		m1.add(mif1);
 		m1.add(mif2);
@@ -108,8 +117,9 @@ public class JNotepad extends JFrame implements ActionListener{
 		m3.add(mii2);
 		
 		
-		mis1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS,ActionEvent.ALT_MASK));
-		mis2.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS,ActionEvent.ALT_MASK));
+		
+		mis1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
+		mis2.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS,ActionEvent.CTRL_MASK));
 		
 		mif1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,ActionEvent.CTRL_MASK));
 		mif2.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,ActionEvent.CTRL_MASK));
@@ -122,6 +132,7 @@ public class JNotepad extends JFrame implements ActionListener{
 		
 		mis1.addActionListener(this);
 		mis2.addActionListener(this);
+		mis3.addActionListener(this);
 		
 		mii1.addActionListener(this);
 		mii2.addActionListener(this);
@@ -129,6 +140,7 @@ public class JNotepad extends JFrame implements ActionListener{
 		mb.setBackground(Color.lightGray);
 		mb.add(m1);
 		mb.add(m2);
+		mb.add(m3);
 		
 		setJMenuBar(mb);
 	}
@@ -140,10 +152,12 @@ public class JNotepad extends JFrame implements ActionListener{
 		textPanel.setLayout(new BorderLayout());
 		textPanel.add(sp);
 		text.setLineWrap(true); 
-		text.setFont(new Font(name, style, size));
+		text.setFont(new Font("고딕체", Font.PLAIN, fontsize));
 		textPanel.setBackground(Color.white);
 		add(textPanel);
 		add(footer,BorderLayout.SOUTH);
+		
+		super.setIconImage(image);
 		setTitle("JNotePad");
 		setVisible(true);
 		setSize(400,500);
@@ -185,21 +199,42 @@ public class JNotepad extends JFrame implements ActionListener{
 			JOptionPane.showMessageDialog(null, "Copyright ⓒ 2019.김재서 All Rights Reserved.");
 			break;
 		case "information":
-			JOptionPane.showMessageDialog(null, "버전 "+ver+".Ver");
+			JOptionPane.showMessageDialog(null, ver+".Ver");
 			break;
 		case "Font Up":
-			fontsize++;
+			fontsize+=2;
 			if(fontsize>100)
 				fontsize=100;
-			text.setFont(text.getFont().deriveFont(fontsize));
+			text.setFont(new Font("고딕체", Font.PLAIN, fontsize));
 			break;
 		case "Font Down":
-			fontsize--;
-			if(fontsize<1)
-				fontsize=1;
-			text.setFont(text.getFont().deriveFont(fontsize));
+			fontsize-=2;
+			if(fontsize<10)
+				fontsize=10;
+			text.setFont(new Font("고딕체", Font.PLAIN, fontsize));
 			break;
-
+		case "Set Font Size":
+			int flag = 1;
+			while(flag == 1) {
+				try {
+					int tmp = Integer.parseInt(JOptionPane.showInputDialog("폰트 사이즈를 입력해주세요(10~100)"));	
+					fontsize = tmp;
+					if(fontsize > 100)
+						fontsize = 100;
+					else if(fontsize <10)
+						fontsize = 10;
+					text.setFont(new Font("고딕체", Font.PLAIN, fontsize));
+					flag = 0;
+				} catch (Exception e2) {
+					if(e2.getMessage() == "null") {
+						flag = 0;
+					}else {
+						JOptionPane.showMessageDialog(null, "정확한 숫자를 입력하세요.");
+						flag = 1;
+					}
+				}
+			}
+			break;
 		default:
 			break;
 		}
