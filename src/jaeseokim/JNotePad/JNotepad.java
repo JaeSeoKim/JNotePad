@@ -60,10 +60,10 @@ public class JNotepad extends JFrame implements ActionListener{
 		jfc.setFileFilter(txtFilter);
 		int returnVal = jfc.showSaveDialog(jfc);
 		if(returnVal == 0) {
-			File file = new File(jfc.getSelectedFile()+".txt");
+			File file = jfc.getSelectedFile();
 			System.out.println("저장할 파일 " + file.getName());
 			try {
-				BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+				BufferedWriter bw = new BufferedWriter(new FileWriter(file,false));
 				bw.write(text.getText());
 				bw.flush();
 				bw.close();
@@ -84,6 +84,7 @@ public class JNotepad extends JFrame implements ActionListener{
 			try {
 				BufferedReader br = new BufferedReader(new FileReader(file));
 				String tmp;
+				text.setText("");
 				while((tmp=br.readLine())!=null){
 					text.append(tmp);
 					text.append("\n");
@@ -118,7 +119,7 @@ public class JNotepad extends JFrame implements ActionListener{
 		
 		
 		
-		mis1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
+		mis1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, ActionEvent.CTRL_MASK));
 		mis2.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS,ActionEvent.CTRL_MASK));
 		
 		mif1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,ActionEvent.CTRL_MASK));
